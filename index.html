@@ -37,18 +37,18 @@
 
     ContactManager.addRegions({
       mainRegion: "#main-region"
-    });
+    })
 
     ContactManager.Contact = Backbone.Model.extend({})
 
     ContactManager.ContactCollection = Backbone.Collection.extend({
-      model: ContactManager.Contact,
+        model: ContactManager.Contact
 
-      // backbone collections have an attribute called comparator
-      // when defined it will keep our collection in order.
-      comparator: function (contact) {
-        return contact.get('firstName') +' '+ contact.get('lastName')
-      }
+        // backbone collections have an attribute called comparator
+        // when defined it will keep our collection in order.
+      , comparator: function (contact) {
+          return contact.get('firstName') +' '+ contact.get('lastName')
+        }
     })
 
     ContactManager.ContactItemView = Marionette.ItemView.extend({
@@ -59,7 +59,7 @@
     ContactManager.ContactsView = Marionette.CollectionView.extend({
         tagName: 'ul'
       , childView: ContactManager.ContactItemView
-    });
+    })
 
     ContactManager.on('start', function () {
       var contacts = new ContactManager.ContactCollection([
