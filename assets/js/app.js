@@ -1,28 +1,80 @@
-var ContactManager = new Marionette.Application();
+var ContactManager = new Marionette.Application()
 
-ContactManager.addRegions({
-  headerRegion: "#header-region",
-  mainRegion: "#main-region",
-  dialogRegion: Marionette.Region.Dialog.extend({
-    el: "#dialog-region"
+  ContactManager.addRegions({
+    mainRegion: '#main-region'
   })
-});
 
-ContactManager.navigate = function(route,  options){
-  options || (options = {});
-  Backbone.history.navigate(route, options);
-};
+  ContactManager.Contact = Backbone.Model.extend({})
 
-ContactManager.getCurrentRoute = function(){
-  return Backbone.history.fragment
-};
+  ContactManager.ContactCollection = Backbone.Collection.extend({
+      model: ContactManager.Contact
 
-ContactManager.on("start", function(){
-  if(Backbone.history){
-    Backbone.history.start();
+      // backbone collections have an attribute called comparator
+      // when defined it will keep our collection in order.
+    , comparator: function (contact) {
+        return contact.get('firstName') +' '+ contact.get('lastName')
+      }
+  })
 
-    if(this.getCurrentRoute() === ""){
-      ContactManager.trigger("contacts:list");
-    }
-  }
-});
+  ContactManager.ContactItemView = Marionette.ItemView.extend({
+      tagName: 'li'
+    , template: '#contact-list-item'
+  })
+
+  ContactManager.ContactsView = Marionette.CollectionView.extend({
+      tagName: 'ul'
+    , childView: ContactManager.ContactItemView
+  })
+
+  ContactManager.on('start', function () {
+    var contacts = new ContactManager.ContactCollection([
+      {
+          firstName: 'Bob'
+        , lastName: 'LaSlob'
+        , phoneNumber: '555-1212'
+      }
+    , {
+          firstName: 'Alice'
+        , lastName: 'Tampen'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'Alice'
+        , lastName: 'Anastasia'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'April'
+        , lastName: 'Rain'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'Alice'
+        , lastName: 'Campbell'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'Alice'
+        , lastName: 'Campbell'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'Alice'
+        , lastName: 'Rotencrotchen'
+        , phoneNumber: '555-1234'
+      }
+    , {
+          firstName: 'Charlie'
+        , lastName: 'Brown'
+        , phoneNumber: '555-0123'
+      }
+    ])
+
+    var contactsListView = new ContactManager.ContactsView({
+      collection: contacts
+    })
+
+    ContactManager.mainRegion.show(contactsListView)
+})
+
+ContactManager.start()
